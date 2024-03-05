@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Atlas
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 1
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: 0330ab88433cc3843bdc38b7c1dc1bad, type: 3}
+    - {fileID: 2800000, guid: 679e4a83feffcb348a1ef0e676577e25, type: 3}
+    - {fileID: 2800000, guid: ce5c3b72a42d8d549a1ece9b5f367622, type: 3}
+    - {fileID: 2800000, guid: c02936c541d1539408479e4b8af7fb5c, type: 3}
+    - {fileID: 2800000, guid: de47f6ef6fc62f7479e4eaa2a1c66846, type: 3}
+    - {fileID: 2800000, guid: 771286f42ac1cbb4b9be93fd284fb83a, type: 3}
+    - {fileID: 2800000, guid: 66e1e8688c57d90479b957484d032475, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: ce5c3b72a42d8d549a1ece9b5f367622, type: 3}
+  - {fileID: 21300000, guid: 679e4a83feffcb348a1ef0e676577e25, type: 3}
+  - {fileID: 21300000, guid: 771286f42ac1cbb4b9be93fd284fb83a, type: 3}
+  - {fileID: 21300000, guid: c02936c541d1539408479e4b8af7fb5c, type: 3}
+  - {fileID: 21300000, guid: 66e1e8688c57d90479b957484d032475, type: 3}
+  - {fileID: 21300000, guid: 0330ab88433cc3843bdc38b7c1dc1bad, type: 3}
+  - {fileID: 21300000, guid: de47f6ef6fc62f7479e4eaa2a1c66846, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - power
+  - flag
+  - squaree
+  - soldier (3)
+  - tent
+  - army
+  - soldier (4)
+  m_RenderDataMap: {}
+  m_Tag: Atlas
+  m_IsVariant: 0
