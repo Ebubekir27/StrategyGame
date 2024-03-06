@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a438bf58c72f24f419a1402973895c2e, type: 3}
   m_Name: Scriptable Grid
   m_EditorClassIdentifier: 
-  _nodePrefab: {fileID: 5221409352788598588, guid: e18e5b3dfc744f34b9c23947dd9c3207, type: 3}
+  _nodePrefab: {fileID: 7823689949951956669, guid: e18e5b3dfc744f34b9c23947dd9c3207, type: 3}
   _gridWidth: 15
   _gridHeight: 15

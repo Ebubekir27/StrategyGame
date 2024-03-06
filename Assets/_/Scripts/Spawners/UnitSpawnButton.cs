@@ -1,10 +1,10 @@
-using TowerGame;
+using StrategyGame;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UnitSpawnButton : MonoBehaviour
 {
-    [SerializeField] Image image;
+    [SerializeField] private Image image;
     private Button _button;
     private ScriptableUnit _scriptableUnit;
     private void Awake()
@@ -20,7 +20,7 @@ public class UnitSpawnButton : MonoBehaviour
     }
     private void OnClickButton()
     {
-        GridEvents.SpawnUnitRequest?.Invoke(_scriptableUnit);
+        UnitEvents.SpawnUnitRequest?.Invoke(_scriptableUnit);
     }
 
 }

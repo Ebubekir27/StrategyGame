@@ -4,22 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace TowerGame
+namespace StrategyGame
 {
-    public enum ProductType
-    {
-        Soldier,
-        Barrack,
-        PowerPlant,
-    }
-    public enum CellColorState
-    {
-        CanMove,
-        Normal,
-        CantPut,
-        Hit
-    }
-
     public  class  Unit : MonoBehaviour 
     {        
         [SerializeField] private SpriteRenderer _spriteRenderer;
@@ -57,12 +43,13 @@ namespace TowerGame
         private void OnEnable()
         {
             _gridManager = GridManager.Instance;
-            GridEvents.UnitPositionRequest += GetUnitPositionRequest;
+            UnitEvents.UnitPositionRequest += GetUnitPositionRequest;
+           
          
         }
         private void OnDisable()
         {
-            GridEvents.UnitPositionRequest -= GetUnitPositionRequest;
+            UnitEvents.UnitPositionRequest -= GetUnitPositionRequest;
           
         }
       
@@ -88,7 +75,7 @@ namespace TowerGame
            CheckAvailable();
         }
 
-
+        // Mouse Position calculate for unit transform center
         void MousePositionCalculate()
         {
             Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -103,14 +90,14 @@ namespace TowerGame
             transform.position = tempPosition;
 
         }
-
+        // Get Unit
         private void GetUnitPositionRequest(Vector2 position)
         {
             List<Vector2> cellPositionList = CurrentCellPos();
 
             if (cellPositionList.Contains(position))
             {
-                GridEvents.UnitPositionInfo?.Invoke(cellPositionList);
+                UnitEvents.UnitPositionInfo?.Invoke(cellPositionList);
 
             }
 
@@ -221,6 +208,8 @@ namespace TowerGame
             _tileRenderer.color = color;
             
         }
+
+        // Color changes when damaged
         public IEnumerator UnitVisualHit()
         {
             ColorChange(CellColorState.Hit);

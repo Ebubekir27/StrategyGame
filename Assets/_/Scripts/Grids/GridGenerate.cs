@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace TowerGame
+namespace StrategyGame
 {
 
 
@@ -10,8 +10,10 @@ public class GridGenerate : MonoBehaviour
     [SerializeField] private GameObject cellPrefab;
     [SerializeField] private float rowSize;
     [SerializeField] private float columnSize;
-    [SerializeField] private float cellSpace=.32f;
+    [SerializeField] private float cellSpace=1f;
   
+
+        //Generate Game Board Grid
     private void Start()
     {
         for (int i = 0; i < rowSize; i++)

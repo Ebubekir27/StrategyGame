@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TowerGame;
+using StrategyGame;
 
 [CreateAssetMenu]
 public class ScriptableSpawnPoint : ScriptableUnit

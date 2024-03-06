@@ -4,17 +4,9 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
  
-namespace TowerGame
+namespace StrategyGame
 { 
-public enum CellStateType
-{
-    Empty,
-    InProcces,
-    Soldier,
-    Barrack,
-    PowerPlant,
-    SpawnPoint
-}
+
 public struct CellUnit
 {
     public CellStateType cellState;

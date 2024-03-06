@@ -1,16 +1,16 @@
 using System;
-using TowerGame;
+using StrategyGame;
 using UnityEngine;
 
 public class SpawnController:MonoBehaviour
 {
     private void OnEnable()
     {
-        GridEvents.SpawnUnitRequest += OnSpawnUnitRequest;
+        UnitEvents.SpawnUnitRequest += OnSpawnUnitRequest;
     }
     private void OnDisable()
     {
-        GridEvents.SpawnUnitRequest -= OnSpawnUnitRequest;
+        UnitEvents.SpawnUnitRequest -= OnSpawnUnitRequest;
     }
 
     private void OnSpawnUnitRequest(ScriptableUnit scriptableUnit)

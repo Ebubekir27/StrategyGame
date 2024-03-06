@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
  
 
-namespace TowerGame
+namespace StrategyGame
 {
      
     public class SoldierUnit : AttackableUnit
@@ -27,6 +27,7 @@ namespace TowerGame
         }
        
       
+        //Soldier spawn from barrack
        public void SoldierSpawn()
         {
             CheckEmptyNeighbors();
@@ -41,15 +42,16 @@ namespace TowerGame
                     tempPos = _neighborlist[i].GetCoords.Pos;
                 }
             }
-            tempPos.z = -5;
-            transform.position = tempPos;        
+         
+            transform.position = tempPos;
+            tempPos.z = -6;
             tempPos.x = Mathf.Round(tempPos.x);
             tempPos.y = Mathf.Round(tempPos.y);
             SpawnEvents.SoldierSpawnRequest?.Invoke(_nodeSpawnPoint, tempPos);
         }
 
-
-         void CheckEmptyNeighbors()
+        //Check  empty cell  for Spawn position
+        void CheckEmptyNeighbors()
         {
             _gridManager.Cells.TryGetValue(unitBase.transform.position, out _nodeUnit);
 
@@ -66,19 +68,19 @@ namespace TowerGame
          
         }
         private void OnEnable()
-        {                  
-            GridEvents.ProductGoRequest += GetProductMoveRequest;
+        {
+            UnitEvents.ProductGoRequest += GetProductMoveRequest;
             GridEvents.SetProductColorRequest += GetProductColorRequest;
 
         }
         private void OnDisable()
         {
-            GridEvents.ProductGoRequest -= GetProductMoveRequest;
+            UnitEvents.ProductGoRequest -= GetProductMoveRequest;
             GridEvents.SetProductColorRequest -= GetProductColorRequest;
 
         }
 
-
+        //  Product View Color Change
         private void GetProductColorRequest(NodeBase nodebase, CellColorState color)
         {
             List<Vector2> cellPositionList = CurrentCellPos();
@@ -91,7 +93,7 @@ namespace TowerGame
             }
         }
 
-
+        //Product Mouse Right Click Move Request
         private void GetProductMoveRequest(NodeBase startproducts, List<NodeBase> targetPath,Unit targetUnit)
         {
             Vector2 currentPosition;
@@ -105,6 +107,7 @@ namespace TowerGame
                     for (int i = 0; i < pathSteps.Length; i++)
                     {
                         pathSteps[i] = targetPath[targetPath.Count - i - 1].GetCoords.Pos;
+                        pathSteps[i].z = -6;
                     }
 
                     if (startproducts.GetCoords.Pos == currentPosition)
@@ -117,6 +120,7 @@ namespace TowerGame
                         {
                             _gridManager.Cells[targetPath[0].GetCoords.Pos].CellState = ProductType;
                             _gridManager.Cells[targetPath[0].GetCoords.Pos].SetUnit(this);
+
                             //Check near area for attack
                             if (_spawned)
                             {
@@ -125,16 +129,16 @@ namespace TowerGame
                            
                             _spawned = true;
                         });
-                         
 
-                        GridEvents.NextProductGoRequest?.Invoke();
+
+                        UnitEvents.NextProductGoRequest?.Invoke();
                     }
                 }
             }
             else
             {
                 ColorChange(CellColorState.Normal);
-                GridEvents.NextProductGoRequest?.Invoke();
+                UnitEvents.NextProductGoRequest?.Invoke();
             }          
         }    
     }

@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using TowerGame;
+using StrategyGame;
 using UnityEngine;
+
 
 public class ScriptableUnit : ScriptableObject
 {

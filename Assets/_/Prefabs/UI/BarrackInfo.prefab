@@ -577,7 +577,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   barrackName: {fileID: 1268002059242143780}
-  spawnPointButtonImage: {fileID: 1268002060371147258}
   soldierSpawnButtonImages:
   - {fileID: 1268002060897501083}
   - {fileID: 5294961054339298284}
@@ -766,8 +765,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4802dd7b2e34aec4096028192f9008d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpawnPointUnit: {fileID: 2378924805354720708, guid: b2e2711cececb3f4da8ad30f46f81ece, type: 3}
-  SpawnPointConfig: {fileID: 11400000, guid: 010059a29c093004b8818ee25598ffc3, type: 2}
+  spawnPointUnit: {fileID: 2378924805354720708, guid: b2e2711cececb3f4da8ad30f46f81ece, type: 3}
+  spawnPointConfig: {fileID: 11400000, guid: 010059a29c093004b8818ee25598ffc3, type: 2}
 --- !u!1001 &1268002058823355686
 PrefabInstance:
   m_ObjectHideFlags: 0

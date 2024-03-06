@@ -1,11 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TowerGame;
-public class AttackableUnit : DamageableUnit, IAttackable
+using StrategyGame;
+public class AttackableUnit : DamageableUnit
 {
     protected float _damage; 
-   
+   // Check near area for attack
     public IEnumerator CheckArea(Unit targetUnit)
     {
 
