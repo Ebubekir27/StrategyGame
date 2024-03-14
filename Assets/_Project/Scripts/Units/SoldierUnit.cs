@@ -97,7 +97,7 @@ namespace StrategyGame
                 {
                     _clickPos = clickPos;
                     CheckAttackMode();
-                    StartCoroutine(MoveUnit());
+                    StartCoroutine(MoveUnit(0));
                     break;
                 }
             }
@@ -120,38 +120,35 @@ namespace StrategyGame
                 ColorChange(color);
             }
         }
-        IEnumerator MoveUnit()
+        IEnumerator MoveUnit(int repeatCount)
         {
+           
             _targetNode = EmptyNodeFinder.FindEmpty(_clickPos);
             NodeBase startNode = _gridManager.GetCellAtPosition(CurrentCellPos());
             NodeBase endNode = _targetNode;
             List<NodeBase> newlist = FindPathController.FindPath(startNode, endNode);
-            if (startNode.GetUnit == null || startNode.GetUnit == this)
-            {
-                startNode.CellState = CellStateType.Empty;
-                startNode.SetUnit(null);
-            }
+           
             if (newlist == null)
             {
-                int waitCounter = 0;
-                while (waitCounter < 5)
+                yield return new WaitForSeconds(.5f);
+                if (repeatCount>=5)
                 {
-                    yield return new WaitForSeconds(1f);
-                    waitCounter++;
-                    _targetNode = EmptyNodeFinder.FindEmpty(_clickPos);
-                    startNode = _gridManager.GetCellAtPosition(CurrentCellPos());
-                    newlist = FindPathController.FindPath(startNode, _targetNode);
-                    CheckAttackMode();
-                    if (newlist != null)
-                    {
-                        StartCoroutine(MoveUnit());
-                        break;
-                    }
+                    MoveDone();
                 }
-                MoveDone();
+                else
+                {
+                    repeatCount++;
+                    StartCoroutine(MoveUnit(repeatCount));
+                }
+                
             }
             else
             {
+                if (startNode.GetUnit == null || startNode.GetUnit == this)
+                {
+                    startNode.CellState = CellStateType.Empty;
+                    startNode.SetUnit(null);
+                }
                 if (newlist.Count > 0)
                 {
                     newlist[newlist.Count - 1].CellState = CellStateType.InProcces;
@@ -165,7 +162,7 @@ namespace StrategyGame
                             transform.position = CurrentCellPos();
                             if ((Vector2)transform.position != _targetNode.GetCoords.Pos)
                             {
-                                StartCoroutine(MoveUnit());
+                                StartCoroutine(MoveUnit(0));
                             }
                             else
                             {
@@ -177,7 +174,6 @@ namespace StrategyGame
                         else
                         {
                             transform.position = Vector3.MoveTowards(transform.position, newlist[newlist.Count - 1].GetCoords.Pos, .07f);
-
                         }
                         yield return new WaitForEndOfFrame();
                     }
