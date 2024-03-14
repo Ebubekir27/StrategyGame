@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using StrategyGame;
 
-[CreateAssetMenu]
+[CreateAssetMenu(menuName = "Unit/SpawnPoint")]
 public class ScriptableSpawnPoint : ScriptableUnit
 {
      

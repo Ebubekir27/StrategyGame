@@ -35,7 +35,7 @@ namespace StrategyGame
                         return path;
                     }
 
-                    foreach (var neighbor in current.Neighbors.Where(t =>( t.CellState==CellStateType.Empty|| t.CellState == CellStateType.SpawnPoint) && !processed.Contains(t)))
+                    foreach (var neighbor in current.Neighbors.Where(t =>( t.CellState==CellStateType.Empty || t.GetUnit==startNode.GetUnit) && !processed.Contains(t)))
                     {
                         var inSearch = toSearch.Contains(neighbor);
 

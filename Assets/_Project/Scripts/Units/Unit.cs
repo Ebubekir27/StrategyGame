@@ -13,18 +13,26 @@ namespace StrategyGame
         private List<Vector2> UnitCells=new List<Vector2>();
         protected ScriptableUnit _scriptableUnit;        
         protected GridManager _gridManager;        
-        public CellStateType ProductType;
+        public CellStateType CellStateType;
         private string _unitName;
         private int _width;
-        private int _height;
-        protected float _hp;
-        
-        bool _canPut;
-
-        bool _builded;
+        private int _height;        
+        protected float _baseHp;
+        protected float _currentHp;        
+        protected bool _attackable;
+        private bool _canPut;
+        private bool _builded;
 
         public List<Vector2> GetUnitCells =>UnitCells;
         public string GetName=> _unitName;
+        public float GetCurrentHp => _currentHp;
+        public float GetBaseHp => _baseHp;
+        public bool GetAttackable =>  _attackable;
+        public int GetUnitWidth => _width;
+        public int GetUnitHeight => _height;
+
+        public ScriptableUnit GetScriptableUnit => _scriptableUnit;
+
 
         
         public void SetBuildedState(bool state)=>_builded=state;
@@ -35,36 +43,30 @@ namespace StrategyGame
             _spriteRenderer.sprite = scriptableUnit.GetSprite;
             _width =  scriptableUnit.GetWidth;
             _height = scriptableUnit.Getheight;
-            _hp = scriptableUnit.GetHp;
-            ProductType = scriptableUnit.GetProductType;
+            _baseHp= _currentHp = scriptableUnit.GetHp;            
+            CellStateType = scriptableUnit.GetProductType;
             CreateProductCell(_width, _height);
            
         }
         private void OnEnable()
         {
-            _gridManager = GridManager.Instance;
-            UnitEvents.UnitPositionRequest += GetUnitPositionRequest;
-           
-         
+            _gridManager = GridManager.Instance;                  
         }
-        private void OnDisable()
-        {
-            UnitEvents.UnitPositionRequest -= GetUnitPositionRequest;
-          
-        }
-      
+              
         private void Update()
         {
             if ( !_builded)
             {
-                DragProduct();
-                
-               
+                DragProduct();                           
             }
             if (Input.GetMouseButtonDown(0) && _canPut && !_builded)
             {
                 Build();
                
+            }
+            if (Input.GetMouseButtonDown(1) && !_builded)
+            {
+                Destroy(gameObject);
             }
         }
 
@@ -86,22 +88,11 @@ namespace StrategyGame
             tempPosition.x = Mathf.Round(tempPosition.x);
             tempPosition.y = Mathf.Round(tempPosition.y);
             tempPosition.x = Mathf.Clamp(tempPosition.x, 0, _gridManager._scriptableGrid.GetGridWidth - _width);
-            tempPosition.y = Mathf.Clamp(tempPosition.y, 0, _gridManager._scriptableGrid.GetGridheight - _height);
+            tempPosition.y = Mathf.Clamp(tempPosition.y, 0, _gridManager._scriptableGrid.GetGridHeight - _height);
             transform.position = tempPosition;
 
         }
-        // Get Unit
-        private void GetUnitPositionRequest(Vector2 position)
-        {
-            List<Vector2> cellPositionList = CurrentCellPos();
 
-            if (cellPositionList.Contains(position))
-            {
-                UnitEvents.UnitPositionInfo?.Invoke(cellPositionList);
-
-            }
-
-        }
         //Build Product arae
         public void Build()
         {
@@ -109,13 +100,14 @@ namespace StrategyGame
             tempPosition.x = Mathf.Round(tempPosition.x);
             tempPosition.y = Mathf.Round(tempPosition.y);
             transform.position = tempPosition;
-            GridEvents.BuildProductRequest?.Invoke(CurrentCellPos(), ProductType, this);
+            GridEvents.BuildProductRequest?.Invoke(CurrentCellsPos(), CellStateType, this);
             _builded = true;
             ColorChange(CellColorState.Normal);
         }
         //Created Cells
         public void CreateProductCell(int rowSize, int columnSize)
         {
+            UnitCells.Clear();
             for (int i = 0; i < rowSize; i++)
             {
                 for (int j = 0; j < columnSize; j++)
@@ -129,14 +121,15 @@ namespace StrategyGame
             _spriteRenderer.size = new Vector2(rowSize, columnSize);
             float _tileRendererX = Mathf.Clamp((float)(rowSize - 1) / 2, 0, rowSize);
             float _tileRendererY= Mathf.Clamp((float)(columnSize - 1) / 2,0, columnSize);
-            _tileRenderer.transform.position = new Vector3(_tileRendererX, _tileRendererY, 0);
-            _spriteRenderer.transform.position = new Vector3(_tileRendererX, _tileRendererY, 0);
+
+            _tileRenderer.transform.localPosition = new Vector3(_tileRendererX, _tileRendererY, 0);
+            _spriteRenderer.transform.localPosition = new Vector3(_tileRendererX, _tileRendererY, 0);
 
            
              
         }
         // Get Current Cells Pos
-        public List<Vector2> CurrentCellPos()
+        public List<Vector2> CurrentCellsPos()
         {
             List<Vector2> currentPositionList = new List<Vector2>();
             Vector3 tempPosition = transform.position;
@@ -149,11 +142,20 @@ namespace StrategyGame
 
             return currentPositionList;
         }
+        public Vector2 CurrentCellPos()
+        {
+            Vector3 tempPosition = transform.position;
+            tempPosition.x = Mathf.Round(tempPosition.x);
+            tempPosition.y = Mathf.Round(tempPosition.y);
+            
+
+            return tempPosition;
+        }
         //Check unit can be put area
         void CheckAvailable()
         {
             _canPut = true;
-            List<Vector2> currentPositionList = CurrentCellPos();
+            List<Vector2> currentPositionList = CurrentCellsPos();
 
             for (int i = 0; i < currentPositionList.Count; i++)
             {

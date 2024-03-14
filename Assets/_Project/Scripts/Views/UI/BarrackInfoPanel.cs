@@ -7,10 +7,9 @@ using UnityEngine.UI;
 
 public class BarrackInfoPanel : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI barrackName;
-  
+    [SerializeField] private TextMeshProUGUI barrackName; 
     [SerializeField] private List<Image> soldierSpawnButtonImages;
-
+    [SerializeField] private UnitHpInfoView unitHpInfoView;
     private BarrackUnit _barrackUnit;
     public BarrackUnit GetBarrackUnit => _barrackUnit;
     
@@ -18,6 +17,7 @@ public class BarrackInfoPanel : MonoBehaviour
     public void GetBarrackInfoPanelRequest(BarrackUnit barrackUnit)
     {
         _barrackUnit = barrackUnit;
+        unitHpInfoView.SetUnit(_barrackUnit);
         CheckVirtual();
     }
 

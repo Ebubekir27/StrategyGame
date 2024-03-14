@@ -1,146 +1,209 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
+using System.Reflection;
+using Unity.VisualScripting;
 using UnityEngine;
- 
+using static UnityEngine.RuleTile.TilingRuleOutput;
+
 
 namespace StrategyGame
 {
-     
+
     public class SoldierUnit : AttackableUnit
     {
-              
+
         Unit unitBase;
         public Unit GetUnitBase => unitBase;
         public void SetUnitBase(Unit unit) => unitBase = unit;
-        bool _spawned;
-        List<NodeBase> _neighborlist =new List<NodeBase>();
-        List<Vector2> _currentPositionList;
-        Node _nodeSpawnPoint, _nodeUnit;
+        private BarrackUnit _barrackUnit;
+        private Vector2 _spawnPointPos;
+        private Vector2 _clickPos;
+        private Unit _targetUnit;
+        private Node _targetNode;
+
+        private bool _attackMode;
         public void Init(ScriptableSoldier scriptableSoldier)
         {
             base.Init(scriptableSoldier);
             _damage = scriptableSoldier.GetDamage;
             SetBuildedState(true);
-            _gridManager = GridManager.Instance;        
+            _gridManager = GridManager.Instance;
+
+            _barrackUnit = unitBase.GetComponent<BarrackUnit>();
+            _spawnPointPos = _barrackUnit.SpawnPointPosition;
         }
-       
-      
+
+
         //Soldier spawn from barrack
-       public void SoldierSpawn()
+        public void SoldierSpawn()
         {
-            CheckEmptyNeighbors();
-            _gridManager.Cells.TryGetValue(unitBase.GetComponent<BarrackUnit>().SpawnPointPosition, out _nodeSpawnPoint);
-            Vector3 tempPos = _neighborlist[0].GetCoords.Pos;
-            for (int i = 0; i < _neighborlist.Count; i++)
+            Node spawnNode = EmptyNodeFinder.FindEmpty(_spawnPointPos);
+            if (spawnNode == null)
             {
-                float distemp = Mathf.Abs(Vector2.Distance(tempPos, unitBase.transform.position));
-                float disneighborlist = Mathf.Abs(Vector2.Distance(_neighborlist[i].GetCoords.Pos, unitBase.transform.position));
-                if (distemp > disneighborlist)
-                {
-                    tempPos = _neighborlist[i].GetCoords.Pos;
-                }
+                Destroy(gameObject);
+                return;
             }
-         
+            Vector3 tempPos = spawnNode.GetCoords.Pos;
             transform.position = tempPos;
             tempPos.z = -6;
             tempPos.x = Mathf.Round(tempPos.x);
             tempPos.y = Mathf.Round(tempPos.y);
-            SpawnEvents.SoldierSpawnRequest?.Invoke(_nodeSpawnPoint, tempPos);
+            Build();
         }
 
-        //Check  empty cell  for Spawn position
-        void CheckEmptyNeighbors()
-        {
-            _gridManager.Cells.TryGetValue(unitBase.transform.position, out _nodeUnit);
 
-            _currentPositionList = unitBase.CurrentCellPos();
-            for (int i = 0; i < _currentPositionList.Count; i++)
-            {
-                _gridManager.Cells.TryGetValue(_currentPositionList[i], out _nodeUnit);
-
-                foreach (var neighbor in _nodeUnit.Neighbors.Where(t => (t.CellState == CellStateType.Empty || t.CellState == CellStateType.SpawnPoint)))
-                {
-                    _neighborlist.Add(neighbor);
-                }
-            }
-         
-        }
         private void OnEnable()
         {
-            UnitEvents.ProductGoRequest += GetProductMoveRequest;
+            UnitEvents.SelectedUnits += GetSelectedUnit;
+            UnitEvents.AttackStopRequest += GetAttackStopRequest;
             GridEvents.SetProductColorRequest += GetProductColorRequest;
 
         }
         private void OnDisable()
         {
-            UnitEvents.ProductGoRequest -= GetProductMoveRequest;
+            UnitEvents.SelectedUnits -= GetSelectedUnit;
+            UnitEvents.AttackStopRequest -= GetAttackStopRequest;
             GridEvents.SetProductColorRequest -= GetProductColorRequest;
 
+        }
+        void CheckAttackMode()
+        {
+            Node clickNode = _gridManager.GetCellAtPosition(_clickPos);
+            if (clickNode.GetUnit != null)
+            {
+                if (clickNode.GetUnit.GetAttackable)
+                {
+                    _attackMode = true;
+                }
+                else
+                {
+                    _attackMode = false;
+                }
+            }
+            else
+            {
+                _attackMode = false;
+            }
+        }
+        // listen to selected units
+        private void GetSelectedUnit(List<NodeBase> nodes, Vector2 clickPos)
+        {
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (nodes[i] == _gridManager.GetCellAtPosition(CurrentCellPos()))
+                {
+                    _clickPos = clickPos;
+                    CheckAttackMode();
+                    StartCoroutine(MoveUnit());
+                    break;
+                }
+            }
+        }
+
+        private void GetAttackStopRequest(Unit unit)
+        {
+            if (unit == this)
+            {
+                StopCoroutine(CheckArea(_targetUnit));
+            }
         }
 
         //  Product View Color Change
         private void GetProductColorRequest(NodeBase nodebase, CellColorState color)
         {
-            List<Vector2> cellPositionList = CurrentCellPos();
-
+            List<Vector2> cellPositionList = CurrentCellsPos();
             if (cellPositionList.Contains(nodebase.GetCoords.Pos))
             {
-
                 ColorChange(color);
-
             }
         }
-
-        //Product Mouse Right Click Move Request
-        private void GetProductMoveRequest(NodeBase startproducts, List<NodeBase> targetPath,Unit targetUnit)
+        IEnumerator MoveUnit()
         {
-            Vector2 currentPosition;
-            currentPosition.x = Mathf.Round(transform.position.x);
-            currentPosition.y = Mathf.Round(transform.position.y);
-            if (targetPath!=null)
+            _targetNode = EmptyNodeFinder.FindEmpty(_clickPos);
+            NodeBase startNode = _gridManager.GetCellAtPosition(CurrentCellPos());
+            NodeBase endNode = _targetNode;
+            List<NodeBase> newlist = FindPathController.FindPath(startNode, endNode);
+            if (startNode.GetUnit == null || startNode.GetUnit == this)
             {
-                if (targetPath.Count > 0)
+                startNode.CellState = CellStateType.Empty;
+                startNode.SetUnit(null);
+            }
+            if (newlist == null)
+            {
+                int waitCounter = 0;
+                while (waitCounter < 5)
                 {
-                    Vector3[] pathSteps = new Vector3[targetPath.Count];
-                    for (int i = 0; i < pathSteps.Length; i++)
+                    yield return new WaitForSeconds(1f);
+                    waitCounter++;
+                    _targetNode = EmptyNodeFinder.FindEmpty(_clickPos);
+                    startNode = _gridManager.GetCellAtPosition(CurrentCellPos());
+                    newlist = FindPathController.FindPath(startNode, _targetNode);
+                    CheckAttackMode();
+                    if (newlist != null)
                     {
-                        pathSteps[i] = targetPath[targetPath.Count - i - 1].GetCoords.Pos;
-                        pathSteps[i].z = -6;
-                    }
-
-                    if (startproducts.GetCoords.Pos == currentPosition)
-                    {
-                        _gridManager.Cells[currentPosition].CellState = CellStateType.Empty;
-                        _gridManager.Cells[targetPath[0].GetCoords.Pos].CellState = CellStateType.InProcces;
-                        float speed = pathSteps.Length * .2f;
-                        ColorChange(CellColorState.Normal);
-                        transform.DOPath(pathSteps, speed, PathType.Linear).OnComplete(() =>
-                        {
-                            _gridManager.Cells[targetPath[0].GetCoords.Pos].CellState = ProductType;
-                            _gridManager.Cells[targetPath[0].GetCoords.Pos].SetUnit(this);
-
-                            //Check near area for attack
-                            if (_spawned)
-                            {
-                                StartCoroutine(CheckArea( targetUnit));
-                            }
-                           
-                            _spawned = true;
-                        });
-
-
-                        UnitEvents.NextProductGoRequest?.Invoke();
+                        StartCoroutine(MoveUnit());
+                        break;
                     }
                 }
+                MoveDone();
             }
             else
             {
-                ColorChange(CellColorState.Normal);
-                UnitEvents.NextProductGoRequest?.Invoke();
-            }          
-        }    
+                if (newlist.Count > 0)
+                {
+                    newlist[newlist.Count - 1].CellState = CellStateType.InProcces;
+                    newlist[newlist.Count - 1].SetUnit(this);
+
+                    bool loop = true;
+                    while (loop)
+                    {
+                        if ((Vector2)transform.position == newlist[newlist.Count - 1].GetCoords.Pos)
+                        {
+                            transform.position = CurrentCellPos();
+                            if ((Vector2)transform.position != _targetNode.GetCoords.Pos)
+                            {
+                                StartCoroutine(MoveUnit());
+                            }
+                            else
+                            {
+                                MoveDone();
+                            }
+
+                            break;
+                        }
+                        else
+                        {
+                            transform.position = Vector3.MoveTowards(transform.position, newlist[newlist.Count - 1].GetCoords.Pos, .07f);
+
+                        }
+                        yield return new WaitForEndOfFrame();
+                    }
+                }
+                else
+                {
+                    MoveDone();
+                }
+            }
+        }
+        void MoveDone()
+        {
+            ColorChange(CellColorState.Normal);
+            NodeBase currentNode = _gridManager.GetCellAtPosition(CurrentCellPos());
+            currentNode.CellState = CellStateType;
+            currentNode.SetUnit(this);
+            Node clickNode = _gridManager.GetCellAtPosition(_clickPos);
+            if (clickNode.CellState != CellStateType.Empty && _attackMode)
+            {
+
+                StartCoroutine(CheckArea(clickNode.GetUnit));
+            }
+        }
+
+
+
     }
 }
 

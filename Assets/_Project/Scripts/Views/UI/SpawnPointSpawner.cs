@@ -21,4 +21,5 @@ public class SpawnPointSpawner : MonoBehaviour
         newSpawnPoint.SetUnitBase(barrackUnit);
         barrackUnit.SetSpawnPointUnit(newSpawnPoint);
     }
+     
 }

@@ -11,7 +11,7 @@ namespace StrategyGame
         [SerializeField, Range(7, 25)] private int _gridHeight = 15;
 
         public int GetGridWidth => _gridWidth;
-        public int GetGridheight => _gridHeight;
+        public int GetGridHeight => _gridHeight;
         public  Dictionary<Vector2, Node> GenerateGrid()
         {
             var cells = new Dictionary<Vector2, Node>();

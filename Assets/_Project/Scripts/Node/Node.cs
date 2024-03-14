@@ -19,6 +19,6 @@ namespace StrategyGame
                 Neighbors.Add(cell);
             }
         }
-         
+
     }
 }

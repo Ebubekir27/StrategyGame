@@ -4,14 +4,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class SpawnPointButtonUIController : MonoBehaviour,IPointerDownHandler
+public class SpawnPointButtonUIController : MonoBehaviour 
 {
     [SerializeField] private BarrackInfoPanel barrackInfoPanel;
     [SerializeField] private  TextMeshProUGUI spawnPointButtonText;
     [SerializeField] private SpawnPointSpawner spawnPointSpawner;
     private bool _spawnPointAvailable;
 
-    private void OnEnable()
+    private void Update()
     {
         _spawnPointAvailable = barrackInfoPanel.GetBarrackUnit.SpawnPointAvailable;
 
@@ -24,15 +24,16 @@ public class SpawnPointButtonUIController : MonoBehaviour,IPointerDownHandler
         {
             transform.localScale = Vector3.zero;
         }
+        barrackInfoPanel.CheckVirtual();
+
     }
-    
-    public void OnPointerDown(PointerEventData eventData)
+
+    public void OnClickButton()
     {
         if (!_spawnPointAvailable)
         {
             spawnPointSpawner.Spawn(barrackInfoPanel.GetBarrackUnit);
-            barrackInfoPanel.CheckVirtual();
-            _spawnPointAvailable = true;
+            
         }
     }
 }

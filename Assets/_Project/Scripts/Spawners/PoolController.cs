@@ -27,7 +27,7 @@ public class PoolController : MonoBehaviour
         var pool = _pools[prefab];
         var instance = pool[pool.Count - 1];
         pool.RemoveAt(pool.Count - 1);
-
+        instance.SetActive(true);
         return instance;
     }
 

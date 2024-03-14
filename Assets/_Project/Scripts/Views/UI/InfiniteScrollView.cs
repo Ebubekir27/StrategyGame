@@ -45,7 +45,7 @@ public class InfiniteScrollView : MonoBehaviour, IBeginDragHandler, IDragHandler
     {
         if (scrollContent.Vertical)
         {
-            positiveDrag = eventData.scrollDelta.y > 0;
+            positiveDrag = eventData.scrollDelta.y < 0;
         }
         else
         {

@@ -12,6 +12,7 @@ public class BarrackUnit : DamageableUnit
     public Vector2 SpawnPointPosition => _spawnPointPosition;
     public bool CanProduct=> _canProduct;
     public bool SpawnPointAvailable => _spawnPointAvailable;
+    public SpawnPointUnit GetSpawnPointUnit => _spawnPointUnit;
     public void SetSpawnPointUnit(SpawnPointUnit spawnPointUnit) => _spawnPointUnit = spawnPointUnit;
     public void SetSpawnPointState(bool state) => _spawnPointAvailable = state;
     public void SetSpawnPointPosition(Vector2 position) => _spawnPointPosition = position;
@@ -20,7 +21,9 @@ public class BarrackUnit : DamageableUnit
     {
         if (_spawnPointAvailable)
         {
-            _spawnPointUnit.gameObject.SetActive(false);
+            _poolController.ReturnToPool(_spawnPointUnit.GetScriptableUnit.GetPrefab, _spawnPointUnit.gameObject);            
+            _spawnPointUnit = null;
+            _spawnPointAvailable = false;
             var spawnPointNode = _gridManager.GetCellAtPosition(_spawnPointPosition);
             NodeClean(spawnPointNode);
         }

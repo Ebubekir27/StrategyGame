@@ -110,8 +110,8 @@ Transform:
   m_GameObject: {fileID: 6424810397784397347}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 5502602693616529935}
   m_RootOrder: 1
@@ -177,7 +177,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3724924260802349140, guid: 588e185824d6d7442944014d6c87b63f, type: 3}
       propertyPath: m_Name
-      value: Soldier 1
+      value: SoldierPrefab
       objectReference: {fileID: 0}
     - target: {fileID: 3724924260802349142, guid: 588e185824d6d7442944014d6c87b63f, type: 3}
       propertyPath: m_Enabled
@@ -253,7 +253,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 1225341465886922847}
   _tileRenderer: {fileID: 4786450102171410714}
-  _unitCells: []
+  CellStateType: 0
 --- !u!4 &5502602693616529935 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3724924260802349143, guid: 588e185824d6d7442944014d6c87b63f, type: 3}

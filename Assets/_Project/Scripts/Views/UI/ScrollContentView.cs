@@ -51,7 +51,7 @@ public class ScrollContentView : MonoBehaviour
         float originX = 0 - (width * 0.5f);
         float posOffset = childWidth * 0.5f;
         for (int i = 0; i < rtChildren.Length; i++)
-        {
+        {   
             Vector2 childPos = rtChildren[i].localPosition;
             childPos.x = originX + posOffset + i * (childWidth + itemSpacing);
             rtChildren[i].localPosition = childPos;
@@ -66,7 +66,7 @@ public class ScrollContentView : MonoBehaviour
         for (int i = 0; i < rtChildren.Length; i++)
         {
             Vector2 childPos = rtChildren[i].localPosition;
-            childPos.y = originY + posOffset + i * (childHeight + itemSpacing);
+            childPos.y = originY + posOffset + i * (childHeight * 1.5f);
             rtChildren[i].localPosition = childPos;
         }
     }

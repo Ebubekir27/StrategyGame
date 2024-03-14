@@ -16,8 +16,7 @@ public class BarrackSpawner : MonoBehaviour
     public void OnClickButton()
     {
         var newBarrack = _poolController.PullFromPool(barrackUnit.gameObject).GetComponent<BarrackUnit>();
-
-        //var newBarrack = Instantiate(barrackUnit);
-        newBarrack.Init(scriptableBarrack);
+         newBarrack.Init(scriptableBarrack);
+       
     }
 }
